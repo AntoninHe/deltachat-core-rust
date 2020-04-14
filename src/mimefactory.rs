@@ -316,15 +316,27 @@ impl<'a, 'b> MimeFactory<'a, 'b> {
                     };
                     format!("{}{}", re, chat.name)
                 } else {
-                    let raw = message::get_summarytext_by_raw(
-                        self.msg.viewtype,
-                        self.msg.text.as_ref(),
-                        &self.msg.param,
-                        32,
-                        self.context,
-                    );
-                    let raw_subject = raw.lines().next().unwrap_or_default();
-                    format!("Chat: {}", raw_subject)
+                    match chat.param.get(Param::LastSubject) {
+                        Some(last_subject) => {
+                            let subject_start =
+                                match last_subject[..5].chars().position(|c| c == ':') {
+                                    Some(prefix_end) => prefix_end + 1,
+                                    None => 0,
+                                };
+                            format!("Re: {}", last_subject[subject_start..].trim())
+                        }
+                        None => {
+                            let raw = message::get_summarytext_by_raw(
+                                self.msg.viewtype,
+                                self.msg.text.as_ref(),
+                                &self.msg.param,
+                                32,
+                                self.context,
+                            );
+                            let raw_subject = raw.lines().next().unwrap_or_default();
+                            format!("Chat: {}", raw_subject)
+                        }
+                    }
                 }
             }
             Loaded::MDN { .. } => self.context.stock_str(StockMessage::ReadRcpt).into_owned(),

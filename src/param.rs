@@ -117,6 +117,9 @@ pub enum Param {
 
     /// For MDN-sending job
     MsgId = b'I',
+
+    // So that on sending a new message we can sent the subject to "Re: <last subject>"
+    LastSubject = b't',
 }
 
 /// Possible values for `Param::ForcePlaintext`.
