@@ -1201,7 +1201,7 @@ mod tests {
         assert!(needs_encoding("foo bar"));
     }
 
-    use crate::test_utils::{TestContext, dummy_context};
+    use crate::test_utils::{dummy_context, TestContext};
 
     fn configured_offline_context() -> TestContext {
         let t = dummy_context();
@@ -1217,15 +1217,15 @@ mod tests {
 
     #[test]
     fn test_subject() {
-        use crate::dc_receive_imf::dc_receive_imf;
         use crate::chatlist::Chatlist;
         use crate::constants::Viewtype;
+        use crate::dc_receive_imf::dc_receive_imf;
 
         let t = configured_offline_context();
         t.ctx.set_config(Config::ShowEmails, Some("2")).unwrap();
 
         dc_receive_imf(
-            &t.ctx, 
+            &t.ctx,
             b"From: Bob <bob@example.org>\n\
             To: alice@example.org\n\
             Subject: Antw: Chat: hello\n\
@@ -1233,10 +1233,11 @@ mod tests {
             Date: Sun, 22 Mar 2020 22:37:56 +0000\n\
             \n\
             hello\n",
-            "INBOX", 
-            1, 
-            false
-        ).unwrap();
+            "INBOX",
+            1,
+            false,
+        )
+        .unwrap();
 
         let chats = Chatlist::try_load(&t.ctx, 0, None, None).unwrap();
 
